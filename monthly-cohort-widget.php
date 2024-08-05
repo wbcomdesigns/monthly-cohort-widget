@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Monthly Cohort Retention Rate Dashboard Widget
-Description: Adds a dashboard widget to display monthly cohort retention rates for the last three months in a tabular format and generates a combined graph.
+Description: Adds a dashboard widget to display monthly cohort retention rates for the last three months in a tabular format and generate a combined graph.
 Version: 1.0
-Author: vapvarun
+Author: Your Name
 */
 
 // Enqueue Chart.js library
@@ -138,7 +138,7 @@ function mcw_get_retention_data() {
     $current_month_name = date('F', strtotime($current_month));
 
     // Add the current month name to labels if the current month is not fully passed
-    $data['monthly_labels'] = array_slice($month_names, 0, 2);
+    $data['monthly_labels'] = array_slice($month_names, 1);
     if ($current_month_name !== $month_names[2]) {
         $data['monthly_labels'][] = $current_month_name;
     }
@@ -161,6 +161,9 @@ function mcw_get_retention_data() {
 
         $initial_count = count($cohort_users);
         $logged_in_counts = mcw_calculate_monthly_retention(array_merge(...array_map('mcw_get_login_timestamps', array_column($cohort_users, 'ID'))), $start_of_month, count($data['monthly_labels']));
+
+        // Ensure we only show data for months after the registration month
+        $logged_in_counts = array_slice($logged_in_counts, $index);
 
         $data['datasets'][] = [
             'label' => $month_names[$index],
